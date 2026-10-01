@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EasyCrypt Keyboard</string>
+    <string name="ime_name">EasyCrypt Keyboard</string>
+    <string name="subtype_label">Italiano (QWERTY)</string>
+
+    <string name="action_decrypt">Decifra</string>
+    <string name="action_encrypt">Cifra</string>
+    <string name="chip_decrypt_clipboard">Decifra appunti</string>
+    <string name="copy">Copia</string>
+    <string name="insert">Inserisci</string>
+    <string name="replace">Sostituisci</string>
+    <string name="close">Chiudi</string>
+    <string name="share">Condividi</string>
+    <string name="share_label">EasyCrypt</string>
+    <string name="backspace">Cancella</string>
+    <string name="copied">Copiato negli appunti</string>
+    <string name="crypto_hint">Scrivi: il testo viene cifrato</string>
+    <string name="decrypt_error">Impossibile decifrare: password errata o testo non valido</string>
+    <string name="encrypt_error">Errore durante la cifratura</string>
+    <string name="no_password">Imposta prima la password di cifratura</string>
+    <string name="working">Elaborazione…</string>
+    <string name="toggle_crypto">Scrittura cifrata</string>
+    <string name="settings">Impostazioni</string>
+    <string name="decrypted_title">Testo decifrato</string>
+    <string name="encrypted_title">Testo cifrato</string>
+
+    <string name="settings_intro">Tastiera con cifratura AES‑256‑GCM compatibile con la web app EasyCrypt.</string>
+    <string name="step_enable">1. Abilita la tastiera</string>
+    <string name="step_select">2. Seleziona la tastiera</string>
+    <string name="status_enabled">Tastiera abilitata ✓</string>
+    <string name="status_disabled">Tastiera non ancora abilitata</string>
+    <string name="status_selected">Tastiera attiva ✓</string>
+    <string name="status_not_selected">Tastiera non selezionata</string>
+    <string name="password_title">Password di cifratura</string>
+    <string name="password_hint">Inserisci la password</string>
+    <string name="password_show">Mostra password</string>
+    <string name="password_save">Salva password</string>
+    <string name="password_saved">Password salvata</string>
+    <string name="password_removed">Password rimossa</string>
+    <string name="password_set">Una password è già impostata. Scrivine una nuova per sostituirla.</string>
+    <string name="password_unset">Nessuna password impostata.</string>
+    <string name="password_note">La password viene conservata sul dispositivo, protetta dall\'Android Keystore. Chi riceve i messaggi deve usare la stessa password.</string>
+    <string name="options_title">Tastiera</string>
+    <string name="option_number_row">Riga fissa dei numeri</string>
+    <string name="option_vibration">Vibrazione alla pressione dei tasti</string>
+    <string name="option_autocorrect">Correzione automatica (T9)</string>
+    <string name="option_autocorrect_note">Corregge la parola quando premi spazio o un segno di punteggiatura. Premi subito cancella per annullare la correzione.</string>
+    <string name="option_glide">Digitazione a scorrimento</string>
+    <string name="option_gestures_note">Scorri il dito da una lettera all\'altra per scrivere una parola. Scorri sulla barra spaziatrice per spostare il cursore; scorri a sinistra dal tasto cancella per eliminare parole intere.</string>
+    <string name="option_bottom_offset">Distanza dal bordo inferiore: %1$d</string>
+    <string name="option_emoji_font">Stile delle emoji nella tastiera</string>
+    <string name="emoji_font_system">Emoji di sistema</string>
+    <string name="emoji_font_custom">Font personalizzato attivo</string>
+    <string name="emoji_font_choose">Scegli font…</string>
+    <string name="emoji_font_reset">Ripristina</string>
+    <string name="emoji_font_invalid">Il file scelto non è un font valido</string>
+    <string-array name="emoji_categories">
+        <item>Usate di recente</item>
+        <item>Smile ed emozioni</item>
+        <item>Persone</item>
+        <item>Animali e natura</item>
+        <item>Cibo e bevande</item>
+        <item>Viaggi e luoghi</item>
+        <item>Attività</item>
+        <item>Oggetti</item>
+        <item>Simboli</item>
+        <item>Bandiere</item>
+    </string-array>
+    <string name="text_crypt_title">Cifra o decifra un testo</string>
+    <string name="text_crypt_open">Cifra o decifra un testo…</string>
+    <string name="text_crypt_open_note">Scrivi o incolla un testo e cifralo o decifralo qui nell\'app, senza usare la tastiera.</string>
+    <string name="text_crypt_intro">Scrivi o incolla qui un testo, poi scegli se cifrarlo o decifrarlo con la password salvata.</string>
+    <string name="text_crypt_hint">Testo da cifrare o decifrare</string>
+    <string name="text_crypt_empty">Scrivi o incolla prima un testo</string>
+    <string name="paste">Incolla</string>
+    <string name="clear">Svuota</string>
+    <string name="clipboard_empty">Negli appunti non c\'è testo</string>
+    <string name="onboarding_skip">Salta</string>
+    <string name="onboarding_next">Avanti</string>
+    <string name="onboarding_start">Inizia</string>
+    <string name="onboarding_replay">Rivedi l\'introduzione</string>
+    <string name="onboarding_welcome_title">Benvenuto in EasyCrypt</string>
+    <string name="onboarding_welcome_body">Scrivi messaggi che può leggere solo chi conosce la tua password, in qualsiasi app.</string>
+    <string name="onboarding_welcome_point_1">Cifratura AES‑256, compatibile con la web app EasyCrypt</string>
+    <string name="onboarding_welcome_point_2">Tutto avviene sul telefono: l\'app non usa Internet</string>
+    <string name="onboarding_welcome_point_3">Una tastiera completa: scorrimento, correzione, emoji</string>
+    <string name="onboarding_write_title">Scrivi cifrato</string>
+    <string name="onboarding_write_body">Tocca il lucchetto in alto a sinistra sulla tastiera: scrivi normalmente e nel messaggio compare, in tempo reale, il testo cifrato.</string>
+    <string name="onboarding_demo_typed">Tu scrivi</string>
+    <string name="onboarding_demo_sent">Nel messaggio compare</string>
+    <string name="onboarding_demo_received">Ricevi</string>
+    <string name="onboarding_demo_read">Leggi</string>
+    <string name="onboarding_demo_plain">Ci vediamo alle 8 🍕</string>
+    <string name="onboarding_demo_cipher">s/qQG3Bis0JTkkkpYSgROLQGDTxokXYAfj+J2hDAYQKJoAaCT2Ea9p…</string>
+    <string name="onboarding_read_title">Leggi i messaggi cifrati</string>
+    <string name="onboarding_read_body">Seleziona un testo cifrato e tocca «Decifra», oppure copialo: sulla tastiera compare «Decifra appunti».</string>
+    <string name="onboarding_free_title">Anche senza la tastiera</string>
+    <string name="onboarding_free_body">Non sei obbligato a usare la tastiera EasyCrypt: puoi cifrare e decifrare in altri tre modi.</string>
+    <string name="onboarding_free_point_1">Seleziona un testo in qualsiasi app e scegli «Cifra» o «Decifra» dal menu</string>
+    <string name="onboarding_free_point_2">Seleziona un testo, tocca «Condividi» e scegli «EasyCrypt»</string>
+    <string name="onboarding_free_point_3">Apri l\'app e incolla il testo in «Cifra o decifra un testo»</string>
+    <string name="onboarding_setup_title">Prepariamo tutto</string>
+    <string name="onboarding_setup_body">Tre passi e sei pronto.</string>
+    <string name="onboarding_step_enable">Abilita la tastiera</string>
+    <string name="onboarding_step_enable_note">Attiva «EasyCrypt Keyboard» nell\'elenco delle tastiere.</string>
+    <string name="onboarding_step_enable_action">Apri impostazioni</string>
+    <string name="onboarding_step_select">Scegli la tastiera</string>
+    <string name="onboarding_step_select_note">Impostala come tastiera in uso.</string>
+    <string name="onboarding_step_select_action">Scegli</string>
+    <string name="onboarding_step_password">Imposta la password</string>
+    <string name="onboarding_step_password_note">Chi riceve i messaggi deve usare la stessa password.</string>
+    <string name="onboarding_step_done">Fatto</string>
+    <string name="onboarding_setup_optional">I primi due passi servono solo se vuoi usare la tastiera. Potrai cambiare tutto in seguito dall\'app.</string>
+    <string name="howto_title">Come si usa</string>
+    <string name="howto_body">Con la tastiera:\n• Tocca il lucchetto in alto a sinistra sulla tastiera per attivare la scrittura cifrata: ciò che digiti compare in chiaro nella barra della tastiera e cifrato nel campo di testo.\n• Seleziona un testo cifrato in un campo di testo: sulla tastiera compare il tasto «Decifra».\n• Copia un testo cifrato: sulla tastiera compare «Decifra appunti».\n\nSenza la tastiera (non serve averla attiva):\n• Seleziona un testo in qualsiasi app e scegli «Cifra» o «Decifra» dal menu di selezione (a volte sotto i tre puntini).\n• Seleziona un testo, tocca «Condividi», scegli «EasyCrypt» e poi «Cifra» o «Decifra».\n• Apri «Cifra o decifra un testo» qui nell\'app e scrivi o incolla il testo.\n\nAlcune app (ad esempio Google Keep) non mostrano «Cifra» e «Decifra» nel menu di selezione: in quel caso usa «Condividi» oppure copia il testo e incollalo nella pagina dell\'app.</string>
+    <string name="try_hint">Prova qui la tastiera</string>
+</resources>

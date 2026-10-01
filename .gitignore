@@ -1,0 +1,44 @@
+# ── Sistema operativo ed editor ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# ── Android (EasyCryptKeyboardAndroid) ───────────────────────────────────────
+.gradle/
+.kotlin/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+# Percorso dell'SDK su questo computer
+local.properties
+# APK e pacchetti generati
+*.apk
+*.aab
+*.ap_
+# Chiavi di firma: non vanno mai pubblicate
+*.jks
+*.keystore
+keystore.properties
+# Font emoji di Apple usato solo per le prove: è proprietario (e pesa 35 MB)
+Emoji-iOS.ttf
+
+# ── Mac e PC (EasyCrypt-Mac-PC) ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv*/
+venv/
+dist/
+*.spec
+
+# ── Varie ────────────────────────────────────────────────────────────────────
+.claude/
+*.log
+
+# ── Pacchetti creati da «Pubblica release.command» ───────────────────────────
+/release/
+Pubblica release.command

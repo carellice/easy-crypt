@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.EasyCrypt" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorAccent">#8AB4F8</item>
+    </style>
+
+    <style name="Theme.EasyCrypt.Dialog" parent="android:Theme.Material.Dialog">
+        <item name="android:colorAccent">#8AB4F8</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowMinWidthMinor">88%</item>
+    </style>
+</resources>

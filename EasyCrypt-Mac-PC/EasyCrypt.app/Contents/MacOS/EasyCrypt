@@ -1,0 +1,11 @@
+#!/bin/bash
+# Avvia easycrypt.py, che sta nella cartella accanto a EasyCrypt.app, senza aprire il Terminale.
+DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
+cd "$DIR" || exit 1
+# Serve un Python con Tk 8.6 o successivo: quello fornito da Apple (/usr/bin/python3) ha un Tk vecchio che si blocca.
+for python in /usr/local/bin/python3 /opt/homebrew/bin/python3 /Library/Frameworks/Python.framework/Versions/Current/bin/python3; do
+  if "$python" -c 'import tkinter, sys; sys.exit(tkinter.TkVersion < 8.6)' 2>/dev/null; then
+    exec "$python" "$DIR/easycrypt.py"
+  fi
+done
+osascript -e 'display dialog "Per usare EasyCrypt serve Python 3: installalo da python.org e riprova." buttons {"OK"} default button 1 with title "EasyCrypt" with icon caution'
