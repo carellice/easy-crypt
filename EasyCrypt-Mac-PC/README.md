@@ -33,11 +33,21 @@ decifrato) e **sostituito sul posto**. Gli appunti tornano poi com'erano.
 | Cifra la selezione | `⌃⌥⌘E` (Control + Opzione + Comando + E) | `Ctrl + Alt + Maiusc + E` |
 | Decifra la selezione | `⌃⌥⌘D` | `Ctrl + Alt + Maiusc + D` |
 
-EasyCrypt deve restare aperto (anche ridotto a icona) e avere la password inserita.
+EasyCrypt deve restare in esecuzione e avere la password inserita. Le scorciatoie funzionano anche con la finestra chiusa e la sola icona in background.
 
 > **Mac, la prima volta**: alla prima scorciatoia si aprono le Impostazioni in *Privacy e sicurezza ›
 > Accessibilità*. Attiva EasyCrypt (il sistema lo richiede per simulare copia e incolla), poi chiudi e riapri
 > il programma.
+
+### Icona nel tray o nella barra dei menu
+
+Puoi premere **«Minimizza nel tray»** su Windows o **«Nascondi nella barra dei menu»** su Mac. Anche chiudendo la finestra con la X (il pulsante rosso su Mac), EasyCrypt resta attivo: conserva il testo e la password in memoria e continua a gestire le scorciatoie.
+
+- **Windows**: clic sull’icona per riaprire la finestra; clic destro per il menu. Se l’icona è nascosta dal sistema, cercala tra le icone sotto la freccia del tray.
+- **Mac**: clic sull’icona nella barra dei menu per aprire il menu. Con la finestra nascosta l’app non compare nel Dock.
+- **«Apri EasyCrypt»** riapre la finestra; **«Nascondi finestra»** la richiude; **«Esci»** termina il programma e rimuove l’icona. Puoi uscire anche dal pulsante nella finestra o con `⌘Q` su Mac.
+
+Se non è possibile creare l’icona, la finestra resta accessibile e la chiusura termina il programma.
 
 ### Opzioni
 
@@ -102,6 +112,7 @@ quello. Le due strade producono testi intercambiabili e sono entrambe coperte da
 
 ```bash
 python3 test_easycrypt.py
+python3 -m unittest test_startup.py test_tray.py
 ```
 
 ### Struttura
@@ -111,6 +122,8 @@ python3 test_easycrypt.py
 | `easycrypt.py` | Finestra (tkinter) e flusso delle scorciatoie |
 | `easycrypt_core.py` | Algoritmo di cifratura |
 | `hotkeys.py` | Scorciatoie globali e tasti simulati via `ctypes` (Carbon e CoreGraphics su Mac, `user32` su Windows) |
+| `tray.py` | Icone e menu nativi via `ctypes`: NSStatusBar su Mac, Shell_NotifyIcon su Windows; callback inoltrati al thread Tk |
+| `test_tray.py` | Test di chiusura, riapertura, uscita, ripristino dopo errori e API Win32 simulate |
 | `startup.py` | Avvio al login tramite LaunchAgent su Mac o chiave Run del proprio utente su Windows |
 | `password_store.py` | Password nel Portachiavi (comando `security`) o con DPAPI |
 | `EasyCrypt.app` | Lanciatore per Mac: avvia `easycrypt.py` senza Terminale |

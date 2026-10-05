@@ -13,6 +13,7 @@ import easycrypt_core
 import hotkeys
 import password_store
 import startup
+import tray
 
 ACCENT = '#1a73e8'
 ERROR = '#d93025'
@@ -30,6 +31,9 @@ class App:
         self.root = root
         self.result = ''
         self.pending = None
+        self.tray_ready = False
+        self.closing = False
+        self.tray = tray.Tray(resource("icon.png"), resource("icon.ico"))
 
         root.title('EasyCrypt')
         root.geometry('680x780')
@@ -66,10 +70,17 @@ class App:
             self.logo = self.icon.subsample(max(1, self.icon.width() // 52))
             ttk.Label(header, image=self.logo).pack(side='left', padx=(0, 14))
         titles = ttk.Frame(header)
-        titles.pack(side='left')
+        titles.pack(side='left', fill='x', expand=True)
         ttk.Label(titles, text='EasyCrypt', style='Title.TLabel').pack(anchor='w')
         ttk.Label(titles, text='Cifra e decifra i tuoi testi. Compatibile con l’app Android e la web app.',
                   style='Muted.TLabel').pack(anchor='w')
+
+        controls = ttk.Frame(frame)
+        controls.grid(row=11, column=0, sticky='ew', pady=(10, 0))
+        self.hide_button = ttk.Button(controls, text='Nascondi nella barra dei menu' if MAC else 'Minimizza nel tray',
+                                      command=self.hide_window, state='disabled')
+        self.hide_button.pack(side='left')
+        ttk.Button(controls, text='Esci', command=self.quit).pack(side='right')
 
         # Password
         ttk.Label(frame, text='Password', style='Head.TLabel').grid(row=1, column=0, sticky='w', pady=(18, 4))
@@ -136,7 +147,7 @@ class App:
             if hotkeys.start(root, self.hotkey):
                 hint = (f'Da qualsiasi programma: seleziona un testo e premi {hotkeys.LABELS[hotkeys.ENCRYPT]} per cifrarlo o '
                         f'{hotkeys.LABELS[hotkeys.DECRYPT]} per decifrarlo. Viene sostituito sul posto. '
-                        'EasyCrypt deve restare aperto (anche ridotto a icona).')
+                        'Le scorciatoie funzionano anche con la finestra chiusa e l’icona in background.')
             else:
                 hint = 'Scorciatoie non disponibili: sono già usate da un altro programma o da un\'altra copia di EasyCrypt.'
             hint_label = ttk.Label(frame, text=hint, style='Muted.TLabel', justify='left')
@@ -151,6 +162,18 @@ class App:
         self.set_mode()
         if not self.password.get():
             self.password_entry.focus_set()
+        root.protocol('WM_DELETE_WINDOW', self.close_window)
+        root.bind('<Unmap>', self.minimized, add='+')
+        if MAC:
+            root.createcommand('tk::mac::Quit', self.quit)
+            root.createcommand('tk::mac::ReopenApplication', self.show_window)
+        try:
+            self.tray.start()
+        except Exception as error:
+            self.tray.stop()
+            self.set_status(f'Icona in background non disponibile: {error}', error=True)
+        else:
+            self.poll_tray()
 
     def text_box(self, parent, row, font):
         holder = ttk.Frame(parent)
@@ -166,6 +189,65 @@ class App:
         return text
 
     # --- Azioni ---
+
+    def poll_tray(self):
+        for action, detail in self.tray.poll():
+            if self.closing:
+                return
+            if action == 'ready':
+                self.tray_ready = True
+                self.hide_button.configure(state='normal')
+            elif action == 'error':
+                self.tray_ready = False
+                self.hide_button.configure(state='disabled')
+                self.show_window()
+                self.set_status(f'Icona in background non disponibile: {detail}', error=True)
+            elif action == 'show':
+                self.show_window()
+            elif action == 'hide':
+                self.hide_window()
+            elif action == 'quit':
+                self.quit()
+        if not self.closing:
+            self.root.after(60, self.poll_tray)
+
+    def hide_window(self):
+        if not self.tray_ready or self.closing:
+            return
+        self.root.withdraw()
+        self.tray.set_window_visible(False)
+
+    def show_window(self):
+        if self.closing:
+            return
+        self.tray.set_window_visible(True)
+        self.root.deiconify()
+        self.root.lift()
+        self.root.focus_force()
+
+    def close_window(self):
+        # Se l'icona non è disponibile, non lascia un programma irraggiungibile in background.
+        if self.tray_ready:
+            self.hide_window()
+        else:
+            self.quit()
+
+    def minimized(self, event):
+        if event.widget is self.root and self.root.state() == 'iconic':
+            self.hide_window()
+
+    def quit(self):
+        if self.closing:
+            return
+        if self.busy:
+            # Lascia terminare la sostituzione del testo e il ripristino degli appunti.
+            self.root.after(100, self.quit)
+            return
+        self.closing = True
+        self.tray.stop()
+        if self.pending:
+            self.root.after_cancel(self.pending)
+        self.root.destroy()
 
     def toggle_startup(self):
         requested = self.at_login.get()

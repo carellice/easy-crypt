@@ -39,12 +39,12 @@ jobs:
       - name: Test della cifratura
         run: |
           python test_easycrypt.py
-          python -m unittest test_startup.py
+          python -m unittest test_startup.py test_tray.py
 
       - name: Crea l'exe
         run: >
           pyinstaller --noconfirm --windowed --onefile --name EasyCrypt
-          --icon icon.ico --add-data "icon.png;." easycrypt.py
+          --icon icon.ico --add-data "icon.png;." --add-data "icon.ico;." easycrypt.py
 
       - name: Carica l'exe nella release
         env:

@@ -11,7 +11,7 @@ if [ -z "$found" ]; then
   exit 1
 fi
 "$found" -m venv .venv-build && .venv-build/bin/pip install --quiet pyinstaller cryptography \
-  && .venv-build/bin/pyinstaller --noconfirm --windowed --name EasyCrypt --icon icon.icns --add-data "icon.png:." \
+  && .venv-build/bin/pyinstaller --noconfirm --windowed --name EasyCrypt --icon icon.icns --add-data "icon.png:." --add-data "icon.ico:." \
      --osx-bundle-identifier com.easycrypt.desktop easycrypt.py \
   && echo && echo "Fatto: EasyCrypt.app è nella cartella dist." && open dist
 read -r -p "Premi Invio per chiudere."

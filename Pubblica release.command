@@ -82,7 +82,7 @@ echo "[2/3] Mac: creazione di EasyCrypt.app..."
     "$PYTHON" -m venv .venv-build || exit 1
     .venv-build/bin/pip install --quiet --upgrade pyinstaller cryptography || exit 1
     .venv-build/bin/pyinstaller --noconfirm --log-level WARN --windowed --name EasyCrypt --icon icon.icns \
-        --add-data "icon.png:." --osx-bundle-identifier com.easycrypt.desktop easycrypt.py || exit 1
+        --add-data "icon.png:." --add-data "icon.ico:." --osx-bundle-identifier com.easycrypt.desktop easycrypt.py || exit 1
     # Versione mostrata dal Finder.
     /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $NEW_NAME" dist/EasyCrypt.app/Contents/Info.plist || exit 1
     codesign --force --deep --sign - dist/EasyCrypt.app >/dev/null 2>&1  # firma locale, rifatta dopo la modifica
@@ -95,7 +95,7 @@ echo "[3/3] PC: creazione dello zip..."
     STAGE="$OUT/EasyCrypt-PC"
     mkdir -p "$STAGE" || exit 1
     cd "$DESKTOP" || exit 1
-    cp easycrypt.py easycrypt_core.py hotkeys.py password_store.py startup.py icon.png icon.ico \
+    cp easycrypt.py easycrypt_core.py hotkeys.py password_store.py startup.py tray.py icon.png icon.ico \
         "Avvia EasyCrypt.bat" "Crea app PC.bat" README.md "$STAGE/" || exit 1
     ditto -c -k --keepParent "$STAGE" "$PC_ZIP" || exit 1
     rm -rf "$STAGE"
