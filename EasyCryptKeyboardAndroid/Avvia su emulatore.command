@@ -1,5 +1,5 @@
 #!/bin/bash
-# Doppio click: avvia l'emulatore Pixel, compila e installa EasyCrypt Keyboard e apre l'app.
+# Doppio click: avvia l'emulatore Pixel, compila e installa EasyCrypt e apre l'app.
 
 cd "$(dirname "$0")" || exit 1
 
@@ -43,11 +43,9 @@ done
 echo "Installazione..."
 "$ADB" install -r app/build/outputs/apk/debug/app-debug.apk >/dev/null || fail "installazione non riuscita"
 
-# Abilita e seleziona la tastiera, poi apre la schermata dell'app.
-"$ADB" shell ime enable "$PACKAGE/.EasyCryptIME" >/dev/null
-"$ADB" shell ime set "$PACKAGE/.EasyCryptIME" >/dev/null
-"$ADB" shell am start -n "$PACKAGE/.SettingsActivity" >/dev/null
+# Apre l'editor con la tastiera di sistema.
+"$ADB" shell am start -n "$PACKAGE/.TextCryptActivity" >/dev/null
 
 echo
-echo "Fatto: EasyCrypt Keyboard è aperta nell'emulatore ed è la tastiera attiva."
+echo "Fatto: EasyCrypt è aperta nell'emulatore."
 sleep 3

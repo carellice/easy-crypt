@@ -6,7 +6,7 @@
 
 **Cifra e decifra i tuoi testi dal computer, con una finestra o con una scorciatoia.**
 
-Stessa cifratura di [EasyCrypt Keyboard per Android](../EasyCryptKeyboardAndroid/README.md) e della web app
+Stessa cifratura di [EasyCrypt per Android](../EasyCryptKeyboardAndroid/README.md) e della web app
 EasyCrypt: ciò che cifri sul telefono lo leggi sul computer, e viceversa.
 
 </div>
@@ -43,6 +43,7 @@ EasyCrypt deve restare aperto (anche ridotto a icona) e avere la password inseri
 
 - **Ricorda la password su questo computer** — viene salvata protetta dal sistema operativo. Senza la spunta
   resta in memoria solo finché il programma è aperto.
+- **Avvia EasyCrypt all’accesso al computer** — attiva o disattiva l’avvio automatico al login del tuo utente. Disattivato per impostazione predefinita; la modifica vale dal prossimo accesso. Se sposti l’app, disattiva e riattiva l’opzione dalla nuova posizione.
 - **Finestra sempre in primo piano** — comoda per tenerla accanto a una chat.
 
 ## Installazione
@@ -110,6 +111,7 @@ python3 test_easycrypt.py
 | `easycrypt.py` | Finestra (tkinter) e flusso delle scorciatoie |
 | `easycrypt_core.py` | Algoritmo di cifratura |
 | `hotkeys.py` | Scorciatoie globali e tasti simulati via `ctypes` (Carbon e CoreGraphics su Mac, `user32` su Windows) |
+| `startup.py` | Avvio al login tramite LaunchAgent su Mac o chiave Run del proprio utente su Windows |
 | `password_store.py` | Password nel Portachiavi (comando `security`) o con DPAPI |
 | `EasyCrypt.app` | Lanciatore per Mac: avvia `easycrypt.py` senza Terminale |
 | `Avvia EasyCrypt.bat` | Lanciatore per Windows |

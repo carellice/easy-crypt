@@ -37,7 +37,9 @@ jobs:
         run: python -m pip install --upgrade pyinstaller cryptography
 
       - name: Test della cifratura
-        run: python test_easycrypt.py
+        run: |
+          python test_easycrypt.py
+          python -m unittest test_startup.py
 
       - name: Crea l'exe
         run: >

@@ -6,7 +6,7 @@
 
 **Scrivi messaggi che può leggere solo chi conosce la tua password.**
 
-Su Android è una tastiera, su Mac e PC un programma: stessa cifratura, stessi testi.
+Su Android, Mac e PC è un’app per cifrare e decifrare testi: stessa cifratura, stessi testi.
 
 </div>
 
@@ -30,9 +30,9 @@ Ci vediamo alle 8 🍕   ──►   s/qQG3Bis0JTkkkpYSgROLQGDTxokXYAfj+J2hDAYQK
 
 | | <img src="EasyCryptKeyboardAndroid/icon/icon-rounded-1024.png" width="40" alt=""><br>**Android** | <img src="EasyCrypt-Mac-PC/icon.png" width="40" alt=""><br>**Mac e PC** |
 |---|---|---|
-| Cos'è | Tastiera in stile Gboard con cifratura integrata | Finestra per cifrare e decifrare, più scorciatoie globali |
-| Cifrare | Tocchi il lucchetto e scrivi: nel campo compare il testo già cifrato | Scrivi o incolli nella finestra, oppure selezioni un testo e premi una scorciatoia |
-| Decifrare | Selezioni il testo e tocchi «Decifra» (tastiera, menu di selezione o Condividi) | Incolli nella finestra, oppure selezioni e premi una scorciatoia |
+| Cos'è | Editor con la tua tastiera preferita, condivisione e menu di selezione | Finestra per cifrare e decifrare, più scorciatoie globali |
+| Cifrare | Scrivi nell’app: il risultato si aggiorna in tempo reale; oppure condividi o selezioni testo | Scrivi o incolli nella finestra, oppure selezioni un testo e premi una scorciatoia |
+| Decifrare | Scegli «Decifra» nell’app o nel menu di selezione | Incolli nella finestra, oppure selezioni e premi una scorciatoia |
 | Tecnologia | Kotlin, nativa, senza librerie esterne | Python con tkinter, senza pacchetti obbligatori |
 | Cartella | [`EasyCryptKeyboardAndroid/`](EasyCryptKeyboardAndroid/) | [`EasyCrypt-Mac-PC/`](EasyCrypt-Mac-PC/) |
 | Guida | [README Android](EasyCryptKeyboardAndroid/README.md) | [README Mac e PC](EasyCrypt-Mac-PC/README.md) |
@@ -40,8 +40,7 @@ Ci vediamo alle 8 🍕   ──►   s/qQG3Bis0JTkkkpYSgROLQGDTxokXYAfj+J2hDAYQK
 ## Per iniziare
 
 **Android** — scarica l'APK dall'ultima
-[release](https://github.com/carellice/easy-crypt/releases/latest), installalo e segui l'introduzione
-dell'app: abilita la tastiera, sceglila e imposta la password.
+[release](https://github.com/carellice/easy-crypt/releases/latest), installalo e imposta la password nelle Impostazioni dell’app. Puoi usare Gboard o qualsiasi altra tastiera.
 
 **Mac** — scarica `EasyCrypt-Mac-….zip` dall'ultima [release](https://github.com/carellice/easy-crypt/releases/latest), estrailo e apri `EasyCrypt.app`
 (al primo avvio: clic destro → «Apri»). In alternativa, dal codice: serve
@@ -83,7 +82,7 @@ Entrambe hanno test automatici che decifrano testi prodotti dalla web app EasyCr
 ```
 EasyCrypt/
 ├── Pubblica release.command    crea e pubblica i pacchetti di entrambe le versioni
-├── EasyCryptKeyboardAndroid/   tastiera Android (progetto Gradle)
+├── EasyCryptKeyboardAndroid/   app Android (progetto Gradle)
 └── EasyCrypt-Mac-PC/           programma per Mac e PC (Python)
 ```
 
@@ -96,7 +95,7 @@ GitHub CLI come release di [`carellice/easy-crypt`](https://github.com/carellice
 
 | Pacchetto | Contenuto |
 |---|---|
-| `EasyCryptKeyboard-Android-<versione>.apk` | Tastiera Android |
+| `EasyCrypt-Android-<versione>.apk` | App Android |
 | `EasyCrypt-Mac-<versione>.zip` | `EasyCrypt.app` autonoma, creata con PyInstaller (non richiede Python) |
 | `EasyCrypt-PC-<versione>.zip` | Programma in Python con `Avvia EasyCrypt.bat` (richiede Python) |
 | `EasyCrypt-PC-<versione>.exe` | Programma autonomo per Windows: lo crea GitHub (`.github/workflows/windows-exe.yml`) qualche minuto dopo la pubblicazione e lo aggiunge alla release |

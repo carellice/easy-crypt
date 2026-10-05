@@ -23,12 +23,15 @@ class ProcessTextActivity : Activity() {
     private var password = ""
     private var shared = false
     private var readOnly = true
+    private var awaitingPassword = false
+    private var incoming = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_process_text)
         findViewById<Button>(R.id.close).setOnClickListener { finish() }
 
+        awaitingPassword = savedInstanceState?.getBoolean("awaitingPassword", false) ?: false
         shared = intent.action == Intent.ACTION_SEND
         val text = if (shared) {
             intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString().orEmpty()
@@ -41,14 +44,17 @@ class ProcessTextActivity : Activity() {
             return
         }
 
+        incoming = text
         password = PasswordStore(this).get()
         if (password.isEmpty()) {
             Toast.makeText(this, R.string.no_password, Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, SettingsActivity::class.java))
-            finish()
+            if (awaitingPassword) return
+            awaitingPassword = true
+            startActivityForResult(Intent(this, SettingsActivity::class.java), 1)
             return
         }
 
+        awaitingPassword = false
         if (shared) {
             // Testo condiviso: mostra il testo e lascia scegliere l'operazione.
             findViewById<TextView>(R.id.title).setText(R.string.app_name)
@@ -64,6 +70,16 @@ class ProcessTextActivity : Activity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != 1 || !awaitingPassword) return
+        awaitingPassword = false
+        password = PasswordStore(this).get()
+        if (password.isEmpty()) finish()
+        else process(incoming, encrypt = intent.component?.className?.endsWith("EncryptTextAlias") == true)
+    }
+
     private fun process(text: String, encrypt: Boolean) {
         val result = findViewById<TextView>(R.id.result)
         val copy = findViewById<Button>(R.id.copy)
@@ -75,9 +91,10 @@ class ProcessTextActivity : Activity() {
 
         worker.execute {
             val output = runCatching {
-                if (encrypt) EasyCrypt.encrypt(text, password) else EasyCrypt.decrypt(text, password)
+                if (encrypt) EasyCrypt.encrypt(text, password) else EasyCrypt.decrypt(text.trim(), password)
             }.getOrNull()
             runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
                 if (output == null) {
                     result.setText(if (encrypt) R.string.encrypt_error else R.string.decrypt_error)
                     return@runOnUiThread
@@ -107,6 +124,11 @@ class ProcessTextActivity : Activity() {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(state: Bundle) {
+        state.putBoolean("awaitingPassword", awaitingPassword)
+        super.onSaveInstanceState(state)
     }
 
     override fun onDestroy() {

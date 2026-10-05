@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """EasyCrypt per Mac e PC: una finestra per cifrare e decifrare testi.
 
-Stessa cifratura di EasyCrypt Keyboard (Android) e della web app EasyCrypt. Serve solo Python con tkinter.
+Stessa cifratura di EasyCrypt (Android) e della web app EasyCrypt. Serve solo Python con tkinter.
 """
 import os
 import subprocess
@@ -12,6 +12,7 @@ from tkinter import ttk
 import easycrypt_core
 import hotkeys
 import password_store
+import startup
 
 ACCENT = '#1a73e8'
 ERROR = '#d93025'
@@ -67,7 +68,7 @@ class App:
         titles = ttk.Frame(header)
         titles.pack(side='left')
         ttk.Label(titles, text='EasyCrypt', style='Title.TLabel').pack(anchor='w')
-        ttk.Label(titles, text='Cifra e decifra i tuoi testi. Compatibile con la tastiera Android e la web app.',
+        ttk.Label(titles, text='Cifra e decifra i tuoi testi. Compatibile con l’app Android e la web app.',
                   style='Muted.TLabel').pack(anchor='w')
 
         # Password
@@ -80,11 +81,21 @@ class App:
         ttk.Checkbutton(row, text='Mostra', variable=self.visible, command=self.toggle_visible).grid(row=0, column=1, padx=(10, 0))
         options = ttk.Frame(frame)
         options.grid(row=3, column=0, sticky='ew', pady=(6, 0))
+        options.columnconfigure(0, weight=1)
         if password_store.available():
             ttk.Checkbutton(options, text='Ricorda la password su questo computer', variable=self.remember,
-                            command=self.store_password).pack(side='left')
+                            command=self.store_password).grid(row=0, column=0, sticky='w')
         ttk.Checkbutton(options, text='Finestra sempre in primo piano', variable=self.on_top,
-                        command=lambda: root.attributes('-topmost', self.on_top.get())).pack(side='right')
+                        command=lambda: root.attributes('-topmost', self.on_top.get())).grid(row=0, column=1, sticky='e')
+
+        if startup.available():
+            self.at_login = tk.BooleanVar(value=False)
+            try:
+                self.at_login.set(startup.enabled())
+            except OSError:
+                pass
+            ttk.Checkbutton(options, text='Avvia EasyCrypt all’accesso al computer', variable=self.at_login,
+                            command=self.toggle_startup).grid(row=1, column=0, columnspan=2, sticky='w', pady=(6, 0))
 
         # Cifra / Decifra
         modes = ttk.Frame(frame)
@@ -155,6 +166,17 @@ class App:
         return text
 
     # --- Azioni ---
+
+    def toggle_startup(self):
+        requested = self.at_login.get()
+        try:
+            startup.set_enabled(requested)
+        except OSError as error:
+            self.at_login.set(not requested)
+            self.set_status(f'Impossibile modificare l’avvio automatico: {error}', error=True)
+        else:
+            self.set_status('EasyCrypt si avvierà al prossimo accesso.' if requested
+                            else 'Avvio automatico disattivato.')
 
     def toggle_visible(self):
         self.password_entry.configure(show='' if self.visible.get() else '•')

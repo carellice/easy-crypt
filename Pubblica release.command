@@ -1,7 +1,7 @@
 #!/bin/bash
 # Doppio clic: incrementa la versione, crea i pacchetti di EasyCrypt e li pubblica come release su GitHub.
 #
-#   - Android: APK della tastiera
+#   - Android: APK di EasyCrypt
 #   - Mac:     EasyCrypt.app autonoma (creata con PyInstaller, non richiede Python), in uno zip
 #   - PC:      zip con il programma in Python e «Avvia EasyCrypt.bat» (richiede Python sul PC).
 #              L'exe autonomo lo crea GitHub dopo la pubblicazione (.github/workflows/windows-exe.yml)
@@ -65,7 +65,7 @@ write_version "$NEW_CODE" "$NEW_NAME"
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
-APK="$OUT/EasyCryptKeyboard-Android-$NEW_NAME.apk"
+APK="$OUT/EasyCrypt-Android-$NEW_NAME.apk"
 MAC_ZIP="$OUT/EasyCrypt-Mac-$NEW_NAME.zip"
 PC_ZIP="$OUT/EasyCrypt-PC-$NEW_NAME.zip"
 
@@ -95,7 +95,7 @@ echo "[3/3] PC: creazione dello zip..."
     STAGE="$OUT/EasyCrypt-PC"
     mkdir -p "$STAGE" || exit 1
     cd "$DESKTOP" || exit 1
-    cp easycrypt.py easycrypt_core.py hotkeys.py password_store.py icon.png icon.ico \
+    cp easycrypt.py easycrypt_core.py hotkeys.py password_store.py startup.py icon.png icon.ico \
         "Avvia EasyCrypt.bat" "Crea app PC.bat" README.md "$STAGE/" || exit 1
     ditto -c -k --keepParent "$STAGE" "$PC_ZIP" || exit 1
     rm -rf "$STAGE"
@@ -106,7 +106,7 @@ NOTES="## EasyCrypt $NEW_NAME
 
 | File | Per | Come si installa |
 |---|---|---|
-| \`$(basename "$APK")\` | Android 8.0+ | Apri l'APK sul telefono e segui l'introduzione dell'app |
+| \`$(basename "$APK")\` | Android 8.0+ | Apri l'APK sul telefono e imposta la password nelle Impostazioni dell'app |
 | \`$(basename "$MAC_ZIP")\` | Mac | Estrai e apri EasyCrypt.app. Al primo avvio macOS blocca le app non firmate: clic destro → «Apri», oppure Impostazioni › Privacy e sicurezza › «Apri comunque» |
 | \`$(basename "$PC_ZIP")\` | Windows, con Python | Serve [Python 3](https://www.python.org/downloads/). Estrai e fai doppio clic su «Avvia EasyCrypt.bat» |
 | \`EasyCrypt-PC-$NEW_NAME.exe\` | Windows, senza Python | Compare qui qualche minuto dopo la pubblicazione. Doppio clic; se SmartScreen avvisa: «Ulteriori informazioni» → «Esegui comunque» |
