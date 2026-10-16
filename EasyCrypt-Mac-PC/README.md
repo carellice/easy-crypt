@@ -43,7 +43,7 @@ EasyCrypt deve restare in esecuzione e avere la password inserita. Le scorciatoi
 
 Puoi premere **«Minimizza nel tray»** su Windows o **«Nascondi nella barra dei menu»** su Mac. Anche chiudendo la finestra con la X (il pulsante rosso su Mac), EasyCrypt resta attivo: conserva il testo e la password in memoria e continua a gestire le scorciatoie.
 
-- **Windows**: clic sull’icona per riaprire la finestra; clic destro per il menu. Se l’icona è nascosta dal sistema, cercala tra le icone sotto la freccia del tray.
+- **Windows**: clic sull’icona per riaprire la finestra; clic destro per il menu. Se l’icona è nascosta dal sistema, cercala tra le icone sotto la freccia del tray. Se avvii di nuovo EasyCrypt (dal desktop o dal menu Start) mentre è già attivo, si riapre la finestra esistente invece di una seconda copia.
 - **Mac**: clic sull’icona nella barra dei menu per aprire il menu. Con la finestra nascosta l’app non compare nel Dock.
 - **«Apri EasyCrypt»** riapre la finestra; **«Nascondi finestra»** la richiude; **«Esci»** termina il programma e rimuove l’icona. Puoi uscire anche dal pulsante nella finestra o con `⌘Q` su Mac.
 

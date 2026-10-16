@@ -438,6 +438,8 @@ class App:
 
 
 def main():
+    if not tray.claim_single_instance():
+        return
     if sys.platform == 'win32':
         try:  # testo nitido sugli schermi ad alta risoluzione
             import ctypes

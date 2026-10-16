@@ -82,7 +82,7 @@ class NativeWindowsTests(unittest.TestCase):
         api.procedure = None
         api.quit = False
         api.notifications = []
-        api.messages = [(0x8001, 0x0202), (0x8001, 0x0205), (0xC001, 0), (0x0010, 0)]
+        api.messages = [(0x8001, 0x0202), (0x8001, 0x0205), (tray.SHOW_MESSAGE, 0), (0xC001, 0), (0x0010, 0)]
         def register(pointer):
             api.procedure = pointer._obj.procedure
             return 1
@@ -129,7 +129,7 @@ class NativeWindowsTests(unittest.TestCase):
 
     def test_click_menu_explorer_restart_and_cleanup(self):
         events, api, functions = self.run_backend()
-        self.assertEqual(events, [('ready', None), ('show', None), ('quit', None), ('ready', None)])
+        self.assertEqual(events, [('ready', None), ('show', None), ('quit', None), ('show', None), ('ready', None)])
         self.assertEqual([kind for kind, _ in api.notifications][:2], [0, 0])
         self.assertIn(2, [kind for kind, _ in api.notifications])
         functions['DestroyIcon'].assert_called_once_with(20)
@@ -146,6 +146,37 @@ class NativeWindowsTests(unittest.TestCase):
     def test_initialization_failure_is_reported_to_ui(self):
         events, _, _ = self.run_backend(fail_initialization=True)
         self.assertEqual(events, [('error', 'DLL unavailable')])
+
+
+class SingleInstanceTests(unittest.TestCase):
+    def claim(self, last_error, window=10):
+        functions = {}
+        class Library:
+            def __getattr__(self, name):
+                if name not in functions:
+                    functions[name] = MagicMock(return_value={'CreateMutexW': 5, 'FindWindowW': window}.get(name, 1))
+                return functions[name]
+        with patch.object(tray.sys, 'platform', 'win32'), \
+                patch.object(ctypes, 'WinDLL', side_effect=lambda *a, **k: Library(), create=True), \
+                patch.object(ctypes, 'get_last_error', return_value=last_error, create=True), \
+                patch.object(tray.time, 'sleep'), patch.object(tray, '_instance_lock', []):
+            return tray.claim_single_instance(), functions
+
+    def test_first_copy_keeps_the_lock(self):
+        started, functions = self.claim(0)
+        self.assertTrue(started)
+        functions['PostMessageW'].assert_not_called()
+
+    def test_second_copy_shows_the_first_and_exits(self):
+        started, functions = self.claim(183)
+        self.assertFalse(started)
+        functions['PostMessageW'].assert_called_once_with(10, tray.SHOW_MESSAGE, 0, 0)
+        functions['AllowSetForegroundWindow'].assert_called_once()
+
+    def test_second_copy_starts_if_the_first_never_answers(self):
+        started, functions = self.claim(183, window=None)
+        self.assertTrue(started)
+        functions['PostMessageW'].assert_not_called()
 
 
 if __name__ == '__main__':

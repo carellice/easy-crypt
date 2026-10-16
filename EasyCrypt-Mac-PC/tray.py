@@ -6,6 +6,47 @@ import ctypes
 import queue
 import sys
 import threading
+import time
+
+# Finestra nascosta dell'icona su Windows: una seconda copia la trova per nome e le chiede di mostrarsi.
+WINDOW_CLASS = 'EasyCryptTray'
+SHOW_MESSAGE = 0x8002  # WM_APP + 2
+_instance_lock = []  # mantiene aperto il mutex finché il programma è in esecuzione
+
+
+def claim_single_instance():
+    """Su Windows, se EasyCrypt è già aperto ne riapre la finestra e restituisce False."""
+    if sys.platform != 'win32':
+        return True  # su Mac ci pensa il sistema (tk::mac::ReopenApplication)
+    from ctypes import wintypes as w
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    user = ctypes.WinDLL('user32', use_last_error=True)
+    kernel.CreateMutexW.argtypes = [ctypes.c_void_p, w.BOOL, w.LPCWSTR]
+    kernel.CreateMutexW.restype = w.HANDLE
+    kernel.CloseHandle.argtypes = [w.HANDLE]
+    user.FindWindowW.argtypes = [w.LPCWSTR, w.LPCWSTR]
+    user.FindWindowW.restype = w.HWND
+    user.GetWindowThreadProcessId.argtypes = [w.HWND, ctypes.POINTER(w.DWORD)]
+    user.GetWindowThreadProcessId.restype = w.DWORD
+    user.AllowSetForegroundWindow.argtypes = [w.DWORD]
+    user.PostMessageW.argtypes = [w.HWND, w.UINT, w.WPARAM, w.LPARAM]
+    handle = kernel.CreateMutexW(None, False, 'Local\\EasyCrypt')
+    if not handle:
+        return True  # impossibile verificare: meglio avviarsi
+    if ctypes.get_last_error() != 183:  # ERROR_ALREADY_EXISTS
+        _instance_lock.append(handle)
+        return True
+    kernel.CloseHandle(handle)
+    for _ in range(50):  # l'altra copia potrebbe essere ancora in avvio
+        hwnd = user.FindWindowW(WINDOW_CLASS, None)
+        if hwnd:
+            process = w.DWORD()
+            user.GetWindowThreadProcessId(hwnd, ctypes.byref(process))
+            user.AllowSetForegroundWindow(process.value)  # le permette di portarsi in primo piano
+            user.PostMessageW(hwnd, SHOW_MESSAGE, 0, 0)
+            return False
+        time.sleep(0.1)
+    return True  # nessuna risposta: non lascia l'utente senza finestra
 
 
 class Tray:
@@ -215,7 +256,7 @@ class _WindowsTray:
         shell.Shell_NotifyIconW.argtypes = [w.DWORD, ctypes.POINTER(NotifyIcon)]
         shell.Shell_NotifyIconW.restype = w.BOOL
         instance = kernel.GetModuleHandleW(None)
-        name = f'EasyCryptTray_{id(self):x}'
+        name = WINDOW_CLASS
         taskbar_created = user.RegisterWindowMessageW('TaskbarCreated')
         callback_message = 0x8001
         notification = NotifyIcon()
@@ -251,6 +292,9 @@ class _WindowsTray:
                     self.events.put(('show', None))
                 elif lp == 0x0205:  # click destro
                     menu(hwnd)
+                return 0
+            if message == SHOW_MESSAGE:  # un'altra copia è stata avviata
+                self.events.put(('show', None))
                 return 0
             if message == taskbar_created:
                 add_icon()  # Ripristina l'icona dopo un riavvio di Explorer.
