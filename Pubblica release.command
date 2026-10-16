@@ -60,6 +60,12 @@ abort() {
 
 gh release view "$TAG" -R "$REPO" >/dev/null 2>&1 && fail "la release $TAG esiste già su $REPO"
 
+# Il tag (e quindi l'exe creato da GitHub) deve corrispondere al codice locale usato per Mac e zip PC.
+git diff --quiet HEAD -- "$DESKTOP" || fail "ci sono modifiche non salvate in EasyCrypt-Mac-PC: fai prima commit e push"
+COMMIT=$(git rev-parse HEAD) || fail "commit corrente non trovato"
+git fetch --quiet origin || fail "impossibile contattare GitHub (git fetch)"
+[ -n "$(git branch -r --contains "$COMMIT")" ] || fail "il commit corrente non è su GitHub: esegui prima git push"
+
 echo "Versione: $OLD_NAME -> $NEW_NAME"
 write_version "$NEW_CODE" "$NEW_NAME"
 rm -rf "$OUT"
@@ -115,7 +121,7 @@ Su tutti i dispositivi va usata la stessa password."
 
 echo
 echo "Caricamento di EasyCrypt $NEW_NAME su $REPO..."
-gh release create "$TAG" "$APK" "$MAC_ZIP" "$PC_ZIP" -R "$REPO" --title "EasyCrypt $NEW_NAME" --notes "$NOTES" \
+gh release create "$TAG" "$APK" "$MAC_ZIP" "$PC_ZIP" -R "$REPO" --target "$COMMIT" --title "EasyCrypt $NEW_NAME" --notes "$NOTES" \
     || abort "caricamento non riuscito"
 
 echo
