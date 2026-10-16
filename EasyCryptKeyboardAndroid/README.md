@@ -10,7 +10,11 @@ Puoi anche condividere testo da un’altra app verso **EasyCrypt**, oppure selez
 
 La tastiera personalizzata è stata rimossa. Il pacchetto resta `com.easycrypt.keyboard` per consentire l’aggiornamento delle installazioni esistenti e conservare la password. Se la vecchia tastiera era selezionata, scegli Gboard o un’altra tastiera di sistema dopo l’aggiornamento.
 
-La password è protetta con Android Keystore e l’app non richiede accesso a Internet. Il formato di cifratura resta compatibile con [Mac e PC](../EasyCrypt-Mac-PC/README.md) e la web app: PBKDF2-HMAC-SHA256 (100 000 iterazioni), AES-256-GCM, `base64(salt[16] + iv[12] + ciphertext + tag)`.
+## Aggiornamenti
+
+In **Impostazioni › Aggiornamenti** premi **«Cerca aggiornamenti»**: EasyCrypt controlla l’ultima [release](https://github.com/carellice/easy-crypt/releases/latest) su GitHub e, se c’è una versione più recente, la scarica e la installa con **«Scarica e installa»**. La prima volta Android chiede di consentire a EasyCrypt di installare app; prima di ogni installazione chiede sempre conferma. L’aggiornamento conserva la password salvata.
+
+La password è protetta con Android Keystore. L’app si collega a Internet solo quando premi «Cerca aggiornamenti» o «Scarica e installa», e solo verso GitHub; la cifratura avviene sempre sul dispositivo. Il formato di cifratura resta compatibile con [Mac e PC](../EasyCrypt-Mac-PC/README.md) e la web app: PBKDF2-HMAC-SHA256 (100 000 iterazioni), AES-256-GCM, `base64(salt[16] + iv[12] + ciphertext + tag)`.
 
 ## Sviluppo
 

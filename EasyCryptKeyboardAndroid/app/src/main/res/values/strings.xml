@@ -33,4 +33,17 @@
     <string name="clipboard_empty">Negli appunti non c\'è testo</string>
     <string name="howto_title">Come si usa</string>
     <string name="howto_body">Scrivi o incolla un testo nella schermata principale: il risultato si aggiorna mentre scrivi. Scegli Cifra o Decifra e poi copia o condividi il risultato.\n\nDa un’altra app puoi condividere testo verso EasyCrypt oppure selezionarlo e scegliere Cifra o Decifra dal menu di selezione, anche sotto i tre puntini. Se il campo è modificabile puoi sostituire la selezione con il risultato.\n\nAlcune app non mostrano queste voci: usa Condividi oppure copia il testo e incollalo in EasyCrypt.</string>
+    <string name="update_title">Aggiornamenti</string>
+    <string name="update_installed">Versione installata: %1$s</string>
+    <string name="update_check">Cerca aggiornamenti</string>
+    <string name="update_checking">Controllo in corso…</string>
+    <string name="update_latest">Hai già l\'ultima versione (%1$s).</string>
+    <string name="update_available">È disponibile la versione %1$s.</string>
+    <string name="update_install">Scarica e installa %1$s</string>
+    <string name="update_downloading">Download in corso… %1$d%%</string>
+    <string name="update_confirm">Conferma l\'installazione nella finestra di Android.</string>
+    <string name="update_permission">Consenti a EasyCrypt di installare app, poi torna qui e premi di nuovo il pulsante.</string>
+    <string name="update_error">Aggiornamento non riuscito: %1$s</string>
+    <string name="update_cancelled">Installazione annullata.</string>
+    <string name="update_note">Il controllo si collega a GitHub solo quando premi il pulsante e scarica l\'APK dall\'ultima release di EasyCrypt. Android chiede sempre conferma prima di installarlo.</string>
 </resources>
