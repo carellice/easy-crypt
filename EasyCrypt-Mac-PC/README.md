@@ -47,7 +47,7 @@ Puoi premere **«Minimizza nel tray»** su Windows o **«Nascondi nella barra de
 - **Mac**: clic sull’icona nella barra dei menu per aprire il menu. Con la finestra nascosta l’app non compare nel Dock.
 - **«Apri EasyCrypt»** riapre la finestra; **«Nascondi finestra»** la richiude; **«Esci»** termina il programma e rimuove l’icona. Puoi uscire anche dal pulsante nella finestra o con `⌘Q` su Mac.
 
-Se non è possibile creare l’icona, la finestra resta accessibile e la chiusura termina il programma.
+Su Windows la X attende che l’icona nel tray sia pronta, anche subito dopo l’avvio. Se non è possibile creare l’icona, la finestra resta accessibile: la X riprova a creare il tray e **«Esci»** termina il programma. Su Mac, senza icona, la chiusura termina il programma.
 
 ### Opzioni
 

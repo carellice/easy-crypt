@@ -32,6 +32,8 @@ class App:
         self.result = ''
         self.pending = None
         self.tray_ready = False
+        self.tray_starting = False
+        self.hide_when_ready = False
         self.closing = False
         self.tray = tray.Tray(resource("icon.png"), resource("icon.ico"))
 
@@ -167,13 +169,18 @@ class App:
         if MAC:
             root.createcommand('tk::mac::Quit', self.quit)
             root.createcommand('tk::mac::ReopenApplication', self.show_window)
+        self.start_tray()
+        self.poll_tray()
+
+    def start_tray(self):
+        self.tray_starting = True
         try:
             self.tray.start()
         except Exception as error:
+            self.tray_starting = False
+            self.hide_when_ready = False
             self.tray.stop()
             self.set_status(f'Icona in background non disponibile: {error}', error=True)
-        else:
-            self.poll_tray()
 
     def text_box(self, parent, row, font):
         holder = ttk.Frame(parent)
@@ -195,9 +202,15 @@ class App:
             if self.closing:
                 return
             if action == 'ready':
+                self.tray_starting = False
                 self.tray_ready = True
                 self.hide_button.configure(state='normal')
+                if self.hide_when_ready:
+                    self.hide_when_ready = False
+                    self.hide_window()
             elif action == 'error':
+                self.tray_starting = False
+                self.hide_when_ready = False
                 self.tray_ready = False
                 self.hide_button.configure(state='disabled')
                 self.show_window()
@@ -220,16 +233,26 @@ class App:
     def show_window(self):
         if self.closing:
             return
+        self.hide_when_ready = False
         self.tray.set_window_visible(True)
         self.root.deiconify()
         self.root.lift()
         self.root.focus_force()
 
     def close_window(self):
-        # Se l'icona non è disponibile, non lascia un programma irraggiungibile in background.
+        if self.closing:
+            return
         if self.tray_ready:
             self.hide_window()
+        elif sys.platform == 'win32':
+            # La X non termina l'app, nemmeno durante l'avvio del tray.
+            # Nasconde la finestra solo dopo la conferma dell'icona nativa.
+            self.hide_when_ready = True
+            if not self.tray_starting:
+                self.tray.stop()
+                self.start_tray()
         else:
+            # Senza icona mantiene il comportamento delle altre piattaforme.
             self.quit()
 
     def minimized(self, event):

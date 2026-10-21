@@ -16,6 +16,8 @@ class LifecycleTests(unittest.TestCase):
         self.app.tray = MagicMock()
         self.app.hide_button = MagicMock()
         self.app.tray_ready = True
+        self.app.tray_starting = False
+        self.app.hide_when_ready = False
         self.app.closing = False
         self.app.busy = False
         self.app.pending = None
@@ -35,8 +37,52 @@ class LifecycleTests(unittest.TestCase):
         self.app.tray_ready = False
         self.app.hide_window()
         self.app.root.withdraw.assert_not_called()
-        self.app.close_window()
+        with patch.object(easycrypt.sys, 'platform', 'darwin'):
+            self.app.close_window()
         self.app.root.destroy.assert_called_once()
+
+    def test_windows_close_during_startup_waits_for_icon(self):
+        self.app.tray_ready = False
+        self.app.tray_starting = True
+        with patch.object(easycrypt.sys, 'platform', 'win32'):
+            self.app.close_window()
+        self.app.root.destroy.assert_not_called()
+        self.app.root.withdraw.assert_not_called()
+        self.app.tray.start.assert_not_called()
+        self.app.tray.poll.return_value = [('ready', None)]
+        self.app.poll_tray()
+        self.app.root.withdraw.assert_called_once()
+        self.assertFalse(self.app.hide_when_ready)
+
+    def test_windows_close_retries_failed_tray(self):
+        self.app.tray_ready = False
+        with patch.object(easycrypt.sys, 'platform', 'win32'):
+            self.app.close_window()
+        self.app.tray.stop.assert_called_once()
+        self.app.tray.start.assert_called_once()
+        self.app.root.destroy.assert_not_called()
+        self.app.tray.poll.return_value = [('error', 'access denied')]
+        self.app.poll_tray()
+        self.app.root.deiconify.assert_called_once()
+        self.app.root.withdraw.assert_not_called()
+        self.assertFalse(self.app.hide_when_ready)
+
+    def test_windows_close_with_synchronous_tray_failure_keeps_window(self):
+        self.app.tray_ready = False
+        self.app.tray.start.side_effect = OSError('tray unavailable')
+        with patch.object(easycrypt.sys, 'platform', 'win32'):
+            self.app.close_window()
+        self.app.root.destroy.assert_not_called()
+        self.app.root.withdraw.assert_not_called()
+        self.assertFalse(self.app.tray_starting)
+        self.assertFalse(self.app.hide_when_ready)
+
+    def test_reopen_cancels_pending_hide(self):
+        self.app.hide_when_ready = True
+        self.app.show_window()
+        self.app.tray.poll.return_value = [('ready', None)]
+        self.app.poll_tray()
+        self.app.root.withdraw.assert_not_called()
 
     def test_icon_failure_restores_hidden_window(self):
         self.app.tray.poll.return_value = [('error', 'tray unavailable')]
