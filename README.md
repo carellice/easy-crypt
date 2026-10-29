@@ -33,7 +33,7 @@ Ci vediamo alle 8 🍕   ──►   s/qQG3Bis0JTkkkpYSgROLQGDTxokXYAfj+J2hDAYQK
 | Cos'è | Editor con la tua tastiera preferita, condivisione e menu di selezione | Finestra per cifrare e decifrare, più scorciatoie globali |
 | Cifrare | Scrivi nell’app: il risultato si aggiorna in tempo reale; oppure condividi o selezioni testo | Scrivi o incolli nella finestra, oppure selezioni un testo e premi una scorciatoia |
 | Decifrare | Scegli «Decifra» nell’app o nel menu di selezione | Incolli nella finestra, oppure selezioni e premi una scorciatoia |
-| Tecnologia | Kotlin, nativa, senza librerie esterne | Python con tkinter, senza pacchetti obbligatori |
+| Tecnologia | Kotlin, nativa, AndroidX Biometric per il blocco di accesso | Python con tkinter, senza pacchetti obbligatori |
 | Cartella | [`EasyCryptKeyboardAndroid/`](EasyCryptKeyboardAndroid/) | [`EasyCrypt-Mac-PC/`](EasyCrypt-Mac-PC/) |
 | Guida | [README Android](EasyCryptKeyboardAndroid/README.md) | [README Mac e PC](EasyCrypt-Mac-PC/README.md) |
 
@@ -52,6 +52,10 @@ Ci vediamo alle 8 🍕   ──►   s/qQG3Bis0JTkkkpYSgROLQGDTxokXYAfj+J2hDAYQK
 clic su `Avvia EasyCrypt.bat`.
 
 Su tutti i dispositivi va usata **la stessa password**: è l'unica cosa che serve per leggere i messaggi.
+
+Su Android puoi attivare **Impostazioni › Sicurezza › Richiedi autenticazione biometrica** per proteggere l’accesso con impronta, volto o codice di sblocco del telefono, anche quando apri testi da un’altra app.
+
+**Android 1.0.11 usa una nuova chiave di firma:** per passare dalle versioni precedenti devi disinstallare la vecchia app e poi installare il nuovo APK. Prima assicurati di conoscere la password di cifratura: dopo la disinstallazione va reinserita. I messaggi esistenti restano compatibili.
 
 ## Come funziona la cifratura
 
@@ -103,3 +107,5 @@ GitHub CLI come release di [`carellice/easy-crypt`](https://github.com/carellice
 Servono GitHub CLI autenticata, Android Studio e Python 3 con Tk 8.6+. La versione è unica per tutti i pacchetti
 e sta in `EasyCryptKeyboardAndroid/version.properties`; se un passaggio fallisce viene ripristinata e non viene
 pubblicato nulla.
+
+La firma Android dalla 1.0.11 richiede la chiave dedicata e il file locale `EasyCryptKeyboardAndroid/keystore.properties` (vedi la guida Android). Per preparare una release da Windows, i workflow `mac-packages.yml` e `windows-exe.yml` possono aggiungere i binari desktop a una release indicando il tag; il workflow Mac produce pacchetti distinti per Apple Silicon e Intel.

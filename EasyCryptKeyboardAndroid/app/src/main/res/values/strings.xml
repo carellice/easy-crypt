@@ -14,6 +14,17 @@
     <string name="no_password">Imposta la password in Impostazioni per continuare.</string>
     <string name="working">Elaborazione…</string>
     <string name="settings">Impostazioni</string>
+    <string name="cancel">Annulla</string>
+    <string name="lock_title">Sicurezza</string>
+    <string name="lock_setting">Richiedi autenticazione biometrica</string>
+    <string name="lock_note">Usa impronta o volto per accedere a EasyCrypt, anche da Condividi e dal menu di selezione. L’app si blocca quando passi a un’altra app o spegni lo schermo. In alternativa puoi usare il PIN, la sequenza o la password di sblocco del telefono. Con il blocco attivo, le schermate sono nascoste nelle app recenti e gli screenshot sono disabilitati.</string>
+    <string name="lock_prompt_title">Sblocca EasyCrypt</string>
+    <string name="lock_prompt_subtitle">Conferma la tua identità per accedere ai testi e alle impostazioni.</string>
+    <string name="lock_enable_title">Attiva il blocco biometrico</string>
+    <string name="lock_disable_title">Disattiva il blocco biometrico</string>
+    <string name="lock_unlock">Sblocca</string>
+    <string name="lock_not_recognized">Identità non riconosciuta. Riprova.</string>
+    <string name="lock_unavailable">Per attivare il blocco, configura prima un’impronta o il riconoscimento del volto nelle impostazioni del telefono e verifica che il sensore sia disponibile.</string>
     <string name="decrypted_title">Testo decifrato</string>
     <string name="encrypted_title">Testo cifrato</string>
     <string name="settings_intro">Cifra e decifra testi con EasyCrypt usando la tua tastiera preferita.</string>

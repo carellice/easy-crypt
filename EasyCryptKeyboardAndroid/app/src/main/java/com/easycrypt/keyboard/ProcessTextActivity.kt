@@ -1,6 +1,5 @@
 package com.easycrypt.keyboard
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -18,16 +17,17 @@ import java.util.concurrent.Executors
  *   della selezione se il testo è modificabile;
  * - testo condiviso con l'app (ACTION_SEND): si sceglie se cifrare o decifrare.
  */
-class ProcessTextActivity : Activity() {
+class ProcessTextActivity : LockedActivity() {
     private val worker = Executors.newSingleThreadExecutor()
     private var password = ""
     private var shared = false
     private var readOnly = true
     private var awaitingPassword = false
     private var incoming = ""
+    private var selectedMode: Boolean? = null
+    private var revision = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateUnlocked(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_process_text)
         findViewById<Button>(R.id.close).setOnClickListener { finish() }
 
@@ -45,10 +45,18 @@ class ProcessTextActivity : Activity() {
         }
 
         incoming = text
+        selectedMode = if (savedInstanceState?.containsKey("selectedMode") == true) savedInstanceState.getBoolean("selectedMode") else null
+    }
+
+    override fun onResumeUnlocked() {
+        if (isFinishing) return
         password = PasswordStore(this).get()
         if (password.isEmpty()) {
             Toast.makeText(this, R.string.no_password, Toast.LENGTH_SHORT).show()
-            if (awaitingPassword) return
+            if (awaitingPassword) {
+                finish()
+                return
+            }
             awaitingPassword = true
             startActivityForResult(Intent(this, SettingsActivity::class.java), 1)
             return
@@ -58,29 +66,24 @@ class ProcessTextActivity : Activity() {
         if (shared) {
             // Testo condiviso: mostra il testo e lascia scegliere l'operazione.
             findViewById<TextView>(R.id.title).setText(R.string.app_name)
-            findViewById<TextView>(R.id.result).text = text
+            findViewById<TextView>(R.id.result).text = incoming
             val encrypt = findViewById<Button>(R.id.encrypt)
             val decrypt = findViewById<Button>(R.id.decrypt)
             encrypt.visibility = View.VISIBLE
             decrypt.visibility = View.VISIBLE
-            encrypt.setOnClickListener { process(text, encrypt = true) }
-            decrypt.setOnClickListener { process(text, encrypt = false) }
+            encrypt.setOnClickListener { process(incoming, encrypt = true) }
+            decrypt.setOnClickListener { process(incoming, encrypt = false) }
+            selectedMode?.let { process(incoming, it) }
         } else {
-            process(text, encrypt = intent.component?.className?.endsWith("EncryptTextAlias") == true)
+            process(incoming, encrypt = intent.component?.className?.endsWith("EncryptTextAlias") == true)
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != 1 || !awaitingPassword) return
-        awaitingPassword = false
-        password = PasswordStore(this).get()
-        if (password.isEmpty()) finish()
-        else process(incoming, encrypt = intent.component?.className?.endsWith("EncryptTextAlias") == true)
-    }
-
     private fun process(text: String, encrypt: Boolean) {
+        if (!isAppUnlocked) return
+        selectedMode = encrypt
+        val current = ++revision
+        val currentPassword = password
         val result = findViewById<TextView>(R.id.result)
         val copy = findViewById<Button>(R.id.copy)
         val action = findViewById<Button>(R.id.replace)
@@ -91,10 +94,10 @@ class ProcessTextActivity : Activity() {
 
         worker.execute {
             val output = runCatching {
-                if (encrypt) EasyCrypt.encrypt(text, password) else EasyCrypt.decrypt(text.trim(), password)
+                if (encrypt) EasyCrypt.encrypt(text, currentPassword) else EasyCrypt.decrypt(text.trim(), currentPassword)
             }.getOrNull()
             runOnUiThread {
-                if (isDestroyed) return@runOnUiThread
+                if (isDestroyed || !isAppUnlocked || current != revision) return@runOnUiThread
                 if (output == null) {
                     result.setText(if (encrypt) R.string.encrypt_error else R.string.decrypt_error)
                     return@runOnUiThread
@@ -127,8 +130,20 @@ class ProcessTextActivity : Activity() {
     }
 
     override fun onSaveInstanceState(state: Bundle) {
-        state.putBoolean("awaitingPassword", awaitingPassword)
+        if (isContentCreated) {
+            state.putBoolean("awaitingPassword", awaitingPassword)
+            selectedMode?.let { state.putBoolean("selectedMode", it) }
+        }
         super.onSaveInstanceState(state)
+    }
+
+    override fun onAppLocked() {
+        revision++
+        password = ""
+        if (!isContentCreated) return
+        findViewById<TextView>(R.id.result).text = ""
+        findViewById<View>(R.id.copy).visibility = View.GONE
+        findViewById<View>(R.id.replace).visibility = View.GONE
     }
 
     override fun onDestroy() {

@@ -71,6 +71,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
+            android:text="@string/lock_title"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
+
+        <CheckBox
+            android:id="@+id/biometric_lock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="@string/lock_setting" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_note"
+            android:textAppearance="@android:style/TextAppearance.Material.Caption" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
             android:text="@string/howto_title"
             android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
 

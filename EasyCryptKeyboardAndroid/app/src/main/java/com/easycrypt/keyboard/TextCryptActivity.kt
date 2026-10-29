@@ -1,6 +1,5 @@
 package com.easycrypt.keyboard
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -19,7 +18,7 @@ import android.widget.Toast
 import java.util.concurrent.Executors
 
 /** Editor con la tastiera di sistema e risultato aggiornato dopo ogni modifica. */
-class TextCryptActivity : Activity() {
+class TextCryptActivity : LockedActivity() {
     private val worker = Executors.newSingleThreadExecutor()
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var input: EditText
@@ -31,8 +30,7 @@ class TextCryptActivity : Activity() {
     private var sessionKey: EasyCrypt.SessionKey? = null
     private val update = Runnable { process() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateUnlocked(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_text_crypt)
         applyInsets(findViewById(R.id.root))
         input = findViewById(R.id.input)
@@ -73,8 +71,7 @@ class TextCryptActivity : Activity() {
         else if (intent.action == Intent.ACTION_SEND) input.setText(intent.getCharSequenceExtra(Intent.EXTRA_TEXT))
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onResumeUnlocked() {
         schedule() // Ricalcola anche quando si cambia la password nelle impostazioni.
     }
 
@@ -82,10 +79,12 @@ class TextCryptActivity : Activity() {
         revision++
         handler.removeCallbacks(update)
         showResult(null, false) // Non permette di copiare un risultato ormai superato.
+        if (!isAppUnlocked) return
         handler.postDelayed(update, 180)
     }
 
     private fun process() {
+        if (!isAppUnlocked) return
         val text = input.text.toString().let { if (encrypt) it else it.trim() }
         if (text.isBlank()) return
         val password = PasswordStore(this).get()
@@ -108,7 +107,7 @@ class TextCryptActivity : Activity() {
                 } else EasyCrypt.decrypt(text, password)
             }.getOrNull()
             runOnUiThread {
-                if (current != revision || isDestroyed) return@runOnUiThread
+                if (current != revision || isDestroyed || !isAppUnlocked) return@runOnUiThread
                 showResult(result ?: getString(if (mode) R.string.encrypt_error else R.string.decrypt_error), result != null)
             }
         }
@@ -128,9 +127,21 @@ class TextCryptActivity : Activity() {
     }
 
     override fun onSaveInstanceState(state: Bundle) {
-        state.putString("input", input.text.toString())
-        state.putBoolean("encrypt", encrypt)
+        if (isContentCreated) {
+            state.putString("input", input.text.toString())
+            state.putBoolean("encrypt", encrypt)
+        }
         super.onSaveInstanceState(state)
+    }
+
+    override fun onAppLocked() {
+        revision++
+        handler.removeCallbacks(update)
+        if (isContentCreated) showResult(null, false)
+        worker.execute {
+            sessionPassword = ""
+            sessionKey = null
+        }
     }
 
     override fun onDestroy() {

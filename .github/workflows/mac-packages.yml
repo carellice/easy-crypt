@@ -1,0 +1,55 @@
+name: Pacchetti Mac
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag della release esistente a cui aggiungere i pacchetti Mac
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    strategy:
+      matrix:
+        include:
+          - runner: macos-15
+            arch: AppleSilicon
+          - runner: macos-15-intel
+            arch: Intel
+    runs-on: ${{ matrix.runner }}
+    env:
+      TAG: ${{ inputs.tag }}
+      ARCH: ${{ matrix.arch }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: EasyCrypt-Mac-PC
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Dipendenze e test
+        run: |
+          python -m pip install --upgrade pyinstaller cryptography
+          python -c 'import tkinter; assert tkinter.TkVersion >= 8.6'
+          python test_easycrypt.py
+          python -m unittest test_startup.py test_tray.py
+      - name: Crea e verifica EasyCrypt.app
+        run: |
+          pyinstaller --noconfirm --windowed --name EasyCrypt --icon icon.icns \
+            --add-data 'icon.png:.' --add-data 'icon.ico:.' \
+            --osx-bundle-identifier com.easycrypt.desktop easycrypt.py
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${TAG#v}" dist/EasyCrypt.app/Contents/Info.plist
+          codesign --force --deep --sign - dist/EasyCrypt.app
+          codesign --verify --deep --strict dist/EasyCrypt.app
+          ditto -c -k --keepParent dist/EasyCrypt.app "EasyCrypt-Mac-$ARCH-${TAG#v}.zip"
+      - name: Carica nella release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "EasyCrypt-Mac-$ARCH-${TAG#v}.zip" --clobber --repo "$GITHUB_REPOSITORY"

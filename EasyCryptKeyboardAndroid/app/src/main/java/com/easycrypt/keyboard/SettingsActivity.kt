@@ -1,6 +1,5 @@
 package com.easycrypt.keyboard
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.net.Uri
@@ -16,15 +15,14 @@ import android.widget.Toast
 import java.util.concurrent.Executors
 
 /** Password, istruzioni e aggiornamento dell'app dalle release su GitHub. */
-class SettingsActivity : Activity() {
+class SettingsActivity : LockedActivity() {
     private lateinit var passwordStore: PasswordStore
     private val worker = Executors.newSingleThreadExecutor()
     private lateinit var updateStatus: TextView
     private lateinit var updateButton: Button
     private var release: Updater.Release? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateUnlocked(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_settings)
         passwordStore = PasswordStore(this)
         applyInsets(findViewById(R.id.root))
@@ -41,6 +39,14 @@ class SettingsActivity : Activity() {
             Toast.makeText(this, if (value.isEmpty()) R.string.password_removed else R.string.password_saved, Toast.LENGTH_SHORT).show()
             updateStatus()
         }
+        findViewById<CheckBox>(R.id.biometric_lock).apply {
+            isChecked = AppLock(this@SettingsActivity).enabled
+            setOnClickListener {
+                val enable = isChecked
+                isChecked = AppLock(this@SettingsActivity).enabled
+                changeAppLock(enable)
+            }
+        }
         updateStatus = findViewById(R.id.update_status)
         updateButton = findViewById(R.id.update)
         updateStatus.text = getString(R.string.update_installed, installedVersion())
@@ -50,7 +56,8 @@ class SettingsActivity : Activity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleInstallStatus(intent)
+        setIntent(intent)
+        if (isAppUnlocked) handleInstallStatus(intent)
     }
 
     override fun onDestroy() {
@@ -135,9 +142,14 @@ class SettingsActivity : Activity() {
         updateStatus.text = getString(R.string.update_error, error.message ?: error.javaClass.simpleName)
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onResumeUnlocked() {
         updateStatus()
+        onAppLockChanged()
+        handleInstallStatus(intent)
+    }
+
+    override fun onAppLockChanged() {
+        if (isContentCreated) findViewById<CheckBox>(R.id.biometric_lock).isChecked = AppLock(this).enabled
     }
 
     private fun updateStatus() {
