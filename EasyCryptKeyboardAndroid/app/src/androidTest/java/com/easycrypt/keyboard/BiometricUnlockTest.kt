@@ -84,6 +84,12 @@ class BiometricUnlockTest {
             if (ready) return
             Thread.sleep(100)
         }
-        fail("Autenticazione biometrica non completata entro 20 secondi")
+        var detail = ""
+        scenario.onActivity {
+            detail = "sessione=${context.lockSession.authenticated}, " +
+                "blocco=${it.findViewById<TextView>(R.id.lock_status)?.text}, " +
+                "risultato=${it.findViewById<TextView>(R.id.result)?.text}"
+        }
+        fail("Autenticazione biometrica non completata entro 20 secondi: $detail")
     }
 }

@@ -29,6 +29,8 @@ class ProcessTextActivity : LockedActivity() {
 
     override fun onCreateUnlocked(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_process_text)
+        // Una finestra piena mantiene il task visibile anche mentre Android mostra BiometricPrompt.
+        applyInsets(findViewById(R.id.root))
         findViewById<Button>(R.id.close).setOnClickListener { finish() }
 
         awaitingPassword = savedInstanceState?.getBoolean("awaitingPassword", false) ?: false
